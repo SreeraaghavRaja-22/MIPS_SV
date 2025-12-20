@@ -13,4 +13,14 @@ module alu
 );
 
     always_comb begin
+        
+        branch_taken = 1'b0; 
+        result_hi = 32'b0; 
+        result = 32'b0; 
 
+        case(opsel)
+            C_ADD_U : result = a + b; 
+            C_SUB_U : result = a - b; 
+            C_MUL_U : {result_hi, result} = a * b; // how can Imake stuff signed in SV
+        endcase
+    end
