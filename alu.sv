@@ -1,3 +1,5 @@
+import 
+
 module alu
 #(parameter int WIDTH = 32)
 (
@@ -10,5 +12,5 @@ module alu
     output logic branch_taken
 );
 
+    always_comb begin
 
-    always_comb begin 
