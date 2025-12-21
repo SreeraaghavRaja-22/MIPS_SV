@@ -21,6 +21,11 @@ module alu
         case(opsel)
             C_ADD_U : result = a + b; 
             C_SUB_U : result = a - b; 
-            C_MUL_U : {result_hi, result} = a * b; // how can Imake stuff signed in SV
+            C_MULT  : signed({result_hi, result}) = signed(a * b);
+            C_MUL_U : {result_hi, result} = a * b;
+            C_AND   : result = a & b; 
+            C_OR    : result = a | b; 
+            C_XOR   : result = a ^ b; 
+            C_SRL   
         endcase
     end
