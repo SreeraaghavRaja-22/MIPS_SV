@@ -24,3 +24,5 @@ module alu
             C_MUL_U : {result_hi, result} = a * b; // how can Imake stuff signed in SV
         endcase
     end
+
+endmodule
