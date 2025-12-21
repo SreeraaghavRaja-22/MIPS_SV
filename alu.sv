@@ -1,4 +1,4 @@
-import 
+import alu_pkg
 
 module alu
 #(parameter int WIDTH = 32)
@@ -26,7 +26,9 @@ module alu
             C_AND   : result = a & b; 
             C_OR    : result = a | b; 
             C_XOR   : result = a ^ b; 
-            C_SRL   
+            C_SRL   : result = a >> (ir_shift);
+            C_SLL   : result = a << (ir_shift);
+            C_SRA   : result = signed(a) >> (ir_shift);
         endcase
     end
 
