@@ -10,6 +10,8 @@ module alu
     output logic [WIDTH-1:0] result, 
     output logic [WIDTH-1:0] result_hi, 
     output logic branch_taken
+    output logic carry, 
+    output logic borrow
 );
 
     always_comb begin
@@ -17,10 +19,12 @@ module alu
         branch_taken = 1'b0; 
         result_hi = 32'b0; 
         result = 32'b0; 
+        carry = 1'b0;
+        borrow = 1'b0;
 
         case(opsel)
-            C_ADD_U : result = a + b; 
-            C_SUB_U : result = a - b; 
+            C_ADD_U : {carry, result} = a + b; 
+            C_SUB_U : {borrow, result} = a - b; 
             C_MULT  : signed({result_hi, result}) = signed(a * b);
             C_MUL_U : {result_hi, result} = a * b;
             C_AND   : result = a & b; 
