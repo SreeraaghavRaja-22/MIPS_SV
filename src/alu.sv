@@ -1,4 +1,4 @@
-import alu_pkg
+import alu_pkg::*;
 
 module alu
 #(parameter int WIDTH = 32)
@@ -6,10 +6,10 @@ module alu
     input logic [WIDTH-1:0] reg_a,
     input logic [WIDTH-1:0] reg_b, 
     input logic [4:0] ir_shift, 
-    input logic [4:0] opsel, 
+    input alu_sel_t opsel, 
     output logic [WIDTH-1:0] result, 
     output logic [WIDTH-1:0] result_hi, 
-    output logic branch_taken
+    output logic branch_taken,
     output logic carry, 
     output logic borrow
 );
@@ -23,17 +23,20 @@ module alu
         borrow = 1'b0;
 
         case(opsel)
-            C_ADD_U : {carry, result} = a + b; 
-            C_SUB_U : {borrow, result} = a - b; 
-            C_MULT  : signed({result_hi, result}) = signed(a * b);
-            C_MUL_U : {result_hi, result} = a * b;
-            C_AND   : result = a & b; 
-            C_OR    : result = a | b; 
-            C_XOR   : result = a ^ b; 
-            C_SRL   : result = a >> (ir_shift);
-            C_SLL   : result = a << (ir_shift);
-            C_SRA   : result = signed(a) >> (ir_shift);
+            alu_pkg::C_ADD_U : begin {carry, result} = reg_a + reg_b; end
+            alu_pkg::C_SUB_U : begin {borrow, result} = reg_a - reg_b; end
+            alu_pkg::C_MULT  : begin {result_hi, result} = $signed(reg_a) * reg_b; end
+            alu_pkg::C_MUL_U : begin {result_hi, result} = reg_a * reg_b; end
+            alu_pkg::C_AND   : begin result = reg_a & reg_b; end
+            alu_pkg::C_OR    : begin result = reg_a | reg_b; end
+            alu_pkg::C_XOR   : begin result = reg_a ^ reg_b; end
+            alu_pkg::C_SRL   : begin result = reg_a >> (ir_shift); end
+            alu_pkg::C_SLL   : begin result = reg_a << (ir_shift); end
+            alu_pkg::C_SRA   : begin result = $signed(reg_a) >> (ir_shift); end
+            alu_pkg::C_SLT   : begin if($signed(reg_a) < $signed(reg_b)) result = 1;  end
+            alu_pkg::C_SLTU  : begin if(reg_a < reg_b) result = 1; end
+            alu_pkg::C_BLEZ  : begin if(reg_a <= 0) branch_taken = 1; end 
+            alu_pkg::C_BGTZ  : begin if(reg_a > 0) branch_taken = 1; end 
         endcase
     end
-
 endmodule
