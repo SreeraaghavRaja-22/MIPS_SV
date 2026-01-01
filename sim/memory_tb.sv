@@ -44,16 +44,16 @@ module memory_tb();
     initial begin 
         #1; rst = 1; inport_0_en = 1'b0; inport_1_en = 1'b0; 
         #1; rst = 0; address = '0; wr_data = 32'h0A0A0A0A; mem_write = 1'b1; 
-        @(posedge clk); address = 32'd4; wr_data = 32'hF0F0F0F0;
-        @(posedge clk); address = 32'd0; mem_write = 1'b0; 
-        @(posedge clk); address = 32'd1; mem_write = 1'b0;
-        @(posedge clk); address = 32'd4; mem_write = 1'b0; 
-        @(posedge clk); address = 32'd5; mem_write = 1'b0; 
-        @(posedge clk); address = 32'h0000FFFC; wr_data = 32'h00001111; mem_write = 1'b1;
-        @(posedge clk); address = 32'h0000FFF8; in_data = 32'h00010000; mem_write = 1'b0; inport_0_en = 1'b1; inport_1_en = 1'b0;
-        @(posedge clk); address = 32'h0000FFFC; in_data = 32'd1; inport_1_en = 1'b1; inport_0_en = 1'b0;  
-        @(posedge clk); address = 32'h0000FFF8; mem_write = 1'b0; 
-        @(posedge clk); address = 32'h0000FFFC; mem_write = 1'b0; 
+        repeat(2) @(posedge clk); address = 32'd4; wr_data = 32'hF0F0F0F0;
+        repeat(2) @(posedge clk); address = 32'd0; mem_write = 1'b0; 
+        repeat(2) @(posedge clk); address = 32'd1; mem_write = 1'b0;
+        repeat(2) @(posedge clk); address = 32'd4; mem_write = 1'b0; 
+        repeat(2) @(posedge clk); address = 32'd5; mem_write = 1'b0; 
+        repeat(2) @(posedge clk); address = 32'h0000FFFC; wr_data = 32'h00001111; mem_write = 1'b1;
+        repeat(2) @(posedge clk); address = 32'h0000FFF8; in_data = 32'h00010000; mem_write = 1'b0; inport_0_en = 1'b1; inport_1_en = 1'b0;
+        repeat(2) @(posedge clk); address = 32'h0000FFFC; in_data = 32'd1; inport_1_en = 1'b1; inport_0_en = 1'b0;  
+        repeat(2) @(posedge clk); address = 32'h0000FFF8; mem_write = 1'b0; 
+        repeat(2) @(posedge clk); address = 32'h0000FFFC; mem_write = 1'b0; 
 
         repeat(10) @(posedge clk); $finish;
     end
