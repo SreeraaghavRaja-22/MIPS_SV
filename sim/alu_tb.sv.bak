@@ -17,7 +17,7 @@ module alu_tb();
     integer i; 
     integer total_tests, success_tests, failed_tests;
     logic [2*WIDTH+2:0] actual_output, expected_output;
-    alu_sel_t valid_ops[] = {C_ADD_U, C_SUB_U, C_MULT, C_AND, C_OR, C_XOR, C_SRL, C_SLL, C_SRA, C_SLT, C_SLTU, C_MFHI, C_MFLO, C_JR, C_BEQ, C_BNE, C_BLEZ, C_BGTZ, C_BLTZ, C_BGEZ};
+    alu_sel_t valid_ops[] = {C_ADD_U, C_SUB_U, C_MULT, C_MULT, C_AND, C_OR, C_XOR, C_SRL, C_SLL, C_SRA, C_SLT, C_SLTU, C_MFHI, C_MFLO, C_JR, C_BEQ, C_BNE, C_BLEZ, C_BGTZ, C_BLTZ, C_BGEZ};
 
 
 
