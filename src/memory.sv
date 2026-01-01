@@ -52,11 +52,12 @@ module memory
         .q(ram_rd_data)
     );
 
+    // don't reset inports to not corrupt the input data
     register 
     #(.WIDTH(WIDTH)) 
     INPORT0(
         .clk(clk), 
-        .rst(rst), 
+        .rst(1'b0), 
         .en(inport_0_en), 
         .in(in_data), 
         .out(inport_0_data)
@@ -66,7 +67,7 @@ module memory
     #(.WIDTH(WIDTH)) 
     INPORT1(
         .clk(clk), 
-        .rst(rst), 
+        .rst(1'b0), 
         .en(inport_1_en), 
         .in(in_data), 
         .out(inport_1_data)

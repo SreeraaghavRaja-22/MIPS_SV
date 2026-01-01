@@ -8,7 +8,6 @@ module register_file(
     input logic [31:0] wr_data, 
     output logic [31:0] rd_data0, 
     output logic [31:0] rd_data1, 
-    input logic [31:0] pc_4, 
     input logic jump_and_link
 );
 
@@ -28,7 +27,7 @@ module register_file(
                 regs[0] <= '0;
             end 
             if(jump_and_link) begin 
-                regs[31] <= pc_4; 
+                regs[31] <= wr_data; 
             end 
             rd_data0 <= regs[rd_addr0];
             rd_data1 <= regs[rd_addr1];

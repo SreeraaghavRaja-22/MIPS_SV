@@ -12,13 +12,13 @@ module counter
 
     always_ff @(posedge clk or posedge rst) begin 
         if(rst) begin 
-            count <= '0;  
+            count <= in;  
         end else if(en) begin 
-            count++; 
+            // count <= count + 1; 
+            count++;
         end 
     end 
 
     assign out = count; 
             
-
 endmodule 
