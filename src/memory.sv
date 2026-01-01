@@ -44,7 +44,7 @@ module memory
         end 
     end 
 
-    RAM1 RAMI(
+    ram RAMI(
         .address(address[9:2]), 
         .clock(clk), 
         .data(wr_data), 
