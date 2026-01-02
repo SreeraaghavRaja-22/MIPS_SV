@@ -8,7 +8,7 @@ module alu_tb();
     logic [WIDTH-1:0] reg_a, reg_b; 
     alu_sel_t opsel;
     logic [4:0] ir_shift;
-    logic [WIDTH-1:0] result, result_hi; 
+    logic signed [WIDTH-1:0] result, result_hi; 
     logic branch_taken; 
     logic carry; 
     logic borrow; 
@@ -16,13 +16,13 @@ module alu_tb();
     localparam int MAX_ITERATIONS = 2**8; 
     integer i; 
     integer total_tests, success_tests, failed_tests;
-    logic [2*WIDTH+2:0] actual_output, expected_output;
+    logic signed [2*WIDTH+2:0] actual_output, expected_output;
     alu_sel_t valid_ops[] = {C_ADD_U, C_SUB_U, C_MULT, C_AND, C_OR, C_XOR, C_SRL, C_SLL, C_SRA, C_SLT, C_SLTU, C_MFHI, C_MFLO, C_JR, C_BEQ, C_BNE, C_BLEZ, C_BGTZ, C_BLTZ, C_BGEZ};
 
 
 
-    function logic [2**WIDTH+2:0] check_out (input [WIDTH-1:0] reg_a_in, input [WIDTH-1:0] reg_b_in, input [4:0] opsel_in, input [4:0] ir_shift_in);
-        logic [WIDTH-1:0] result_o, result_hi_o;
+    function logic signed [2*WIDTH+2:0] check_out (input [WIDTH-1:0] reg_a_in, input [WIDTH-1:0] reg_b_in, input [4:0] opsel_in, input [4:0] ir_shift_in);
+        logic signed [WIDTH-1:0] result_o, result_hi_o;
         logic branch_taken_o, carry_o, borrow_o;
         
         
@@ -36,14 +36,14 @@ module alu_tb();
             case(opsel_in)
                 C_ADD_U : begin {carry_o, result_o} = reg_a_in + reg_b_in; end 
                 C_SUB_U : begin {borrow_o, result_o} = reg_a_in - reg_b_in; end 
-                C_MULT  : begin {result_hi_o, result_o} = $signed(reg_a_in) * reg_b_in; end 
+                C_MULT  : begin {result_hi_o, result_o} = $signed(reg_a_in) * $signed(reg_b_in); end 
                 C_MUL_U : begin {result_hi_o, result_o} = reg_a_in * reg_b_in; end 
                 C_AND   : begin result_o = reg_a_in & reg_b_in; end
                 C_OR    : begin result_o = reg_a_in | reg_b_in; end
                 C_XOR   : begin result_o = reg_a_in ^ reg_b_in; end 
-                C_SRL   : begin result_o = reg_a_in >> (ir_shift_in); end 
-                C_SLL   : begin result_o = reg_a_in << (ir_shift_in); end 
-                C_SRA   : begin result_o = $signed(reg_a_in) >> (ir_shift_in); end
+                C_SRL   : begin result_o = reg_b_in >> (ir_shift_in); end 
+                C_SLL   : begin result_o = reg_b_in << (ir_shift_in); end 
+                C_SRA   : begin result_o = $signed(reg_b_in) >>> (ir_shift_in); end
                 C_SLT   : begin if($signed(reg_a_in) < $signed(reg_b_in)) result_o = 1; end 
                 C_SLTU  : begin if(reg_a_in < reg_b_in) result_o = 1; end
                 C_BLEZ  : begin if(reg_a_in <= 0) branch_taken_o = 1'b1; end 

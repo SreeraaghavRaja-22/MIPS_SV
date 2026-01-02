@@ -35,6 +35,7 @@ module datapath
     logic hi_en, lo_en; 
     logic [1:0] alu_lo_hi;
     bus_type concat_out;
+    logic carry, borrow; 
 
 
     // implement program counter
@@ -197,7 +198,9 @@ module datapath
         .opsel(opsel), 
         .branch_taken(branch_taken), 
         .result(result), 
-        .result_hi(result_hi)
+        .result_hi(result_hi),
+        .carry(carry),
+        .borrow(borrow)
     );
 
     // ALU control entity
