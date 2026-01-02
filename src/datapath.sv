@@ -108,7 +108,9 @@ module datapath
     );
 
     // implement register file 
-    register_file RF
+    register_file 
+    #(.WIDTH(WIDTH))
+    RF
     (
         .clk(clk), 
         .rst(rst), 

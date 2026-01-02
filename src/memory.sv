@@ -53,6 +53,8 @@ module memory
     );
 
     // don't reset inports to not corrupt the input data
+    // we want to always use the values we wanted on the input ports when we hit reset 
+    // that's why we can't reset the input ports 
     register 
     #(.WIDTH(WIDTH)) 
     INPORT0(
