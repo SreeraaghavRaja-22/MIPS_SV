@@ -15,7 +15,7 @@ module datapath
     input logic alu_src_a, 
     input logic [1:0] alu_src_b, 
     input logic [1:0] pc_source, 
-    input logic alu_op, 
+    input logic [5:0] alu_op, 
     input logic jump_and_link, 
     input logic is_signed,
     input logic [WIDTH-1:0] inport_data, 
@@ -199,6 +199,16 @@ module datapath
     );
 
     // ALU control entity
+    alu_control ALUC 
+    (
+        .alu_op(alu_op), 
+        .ir_5_to_0(ir_out[5:0]), 
+        .hi_en(hi_en),
+        .lo_en(lo_en), 
+        .alu_lo_hi(alu_lo_hi),
+        .opsel(opsel)
+    );
+
 
     // add ALU out register 
     register
@@ -249,6 +259,8 @@ module datapath
         .out(alu_mux_out)
     );
 
+    assign concat_out = {pc_out[31:28], ir_out[25:0], 2'b00};
+
     // add concat mux 
     mux_4x1
     #(.WIDTH(WIDTH))
@@ -261,9 +273,4 @@ module datapath
         .sel(pc_source),
         .out(conc_mux_out)
     );
-
-    assign concat_out = {pc_out[31:28], ir_out[25:0], 2'b00};
-
 endmodule
-
-   
