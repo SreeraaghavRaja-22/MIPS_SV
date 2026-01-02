@@ -17,7 +17,7 @@ module alu_tb();
     integer i; 
     integer total_tests, success_tests, failed_tests;
     logic signed [2*WIDTH+2:0] actual_output, expected_output;
-    alu_sel_t valid_ops[] = {C_ADD_U, C_SUB_U, C_MULT, C_AND, C_OR, C_XOR, C_SRL, C_SLL, C_SRA, C_SLT, C_SLTU, C_MFHI, C_MFLO, C_JR, C_BEQ, C_BNE, C_BLEZ, C_BGTZ, C_BLTZ, C_BGEZ};
+    alu_sel_t valid_ops[] = {C_ADD_U, C_SUB_U, C_MULT, C_AND, C_OR, C_XOR, C_SRL, C_SLL, C_SRA, C_SLT, C_SLTU, C_MFHI, C_MFLO, C_JR, C_BEQ, C_BNE, C_BLEZ, C_BGTZ, C_BLTZ, C_BGEZ, C_NOP};
 
 
 
@@ -48,6 +48,7 @@ module alu_tb();
                 C_SLTU  : begin if(reg_a_in < reg_b_in) result_o = 1; end
                 C_BLEZ  : begin if(reg_a_in <= 0) branch_taken_o = 1'b1; end 
                 C_BGTZ  : begin if(reg_a_in > 0) branch_taken_o = 1'b1; end 
+                C_NOP   : begin result_o = reg_a; end 
                 default : begin result_o = 0; result_hi_o = 0; branch_taken_o = 1'b0; borrow_o = 1'b0; carry_o = 1'b0; end 
             endcase
 

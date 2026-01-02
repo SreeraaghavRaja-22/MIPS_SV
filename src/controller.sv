@@ -1,6 +1,9 @@
 module controller
 #(parameter int WIDTH = 32)
 (
+    input logic clk, 
+    input logic rst, 
+    input logic [5:0] ir_5_to_0,
     input logic [5:0] ir_31_26,
     output logic pc_write_cond,
     output logic pc_write, 

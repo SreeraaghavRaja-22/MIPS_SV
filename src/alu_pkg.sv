@@ -20,7 +20,8 @@ package alu_pkg;
         C_BLEZ  = 5'd17, 
         C_BGTZ  = 5'd18, 
         C_BLTZ  = 5'd19, 
-        C_BGEZ  = 5'd20
+        C_BGEZ  = 5'd20, 
+        C_NOP   = 5'd31 // max value for 5-bits
     } alu_sel_t; 
 
     typedef enum logic [5:0]{
@@ -42,6 +43,17 @@ package alu_pkg;
     } r_sel_t;
 
     typedef enum logic [5:0]{
-        RTYPE = 6'b000000
+        RTYPE = 6'b000000,
+        ADDIU = 6'b001001,
+        SUBIU = 6'b010000,
+        ANDI  = 6'b001100, 
+        ORI   = 6'b001101, 
+        XORI  = 6'b001110, 
+        SLTI  = 6'b001010,
+        SLTIU = 6'b001011, 
+        
+
+
+
     } alu_op_sel_t;
 endpackage
