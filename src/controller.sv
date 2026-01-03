@@ -33,12 +33,17 @@ module controller
         MEM_ACCESS, 
         MEM_READ_COMP, 
         MEM_ACCESS_STORE, 
+        R_TYPE_STALL,
         R_TYPE_EXEC, 
         R_TYPE_COMP,
+        IMM_VAL_STALL,
         IMM_VAL_COMP, 
         IMM_VAL_STORE,
         BRANCH_COMP, 
         JUMP, 
+        JAL1,
+        JAL2,
+        JUMPREG,
         HALT,
         XXX = 'x
     } state_t;
@@ -104,13 +109,23 @@ module controller
                             alu_src_a = 1'b0; // load PC + 4 value into A 
                             alu_src_b = 2'b11; // load sign extended 16 bit value into B (sign extended and lefted shifted twice)
                             
-                            is_signed = 1'b1;
+                            is_signed = 1'b1;  // must sign extend here
 
                             // alu_op = ADDIU // shouldn't have to worry about this since it's the default value
-                            case(ir_31_26)
-                                alu_pkg::RTYPE : begin next_state = R_TYPE_EXEC; end
+                            case(alu_op_sel_t'(ir_31_26))
+                                alu_pkg::RTYPE : begin 
+                                                    if(r_sel_t'(ir_5_to_0) == R_JR) next_state = JUMPREG;
+                                                    else next_state = R_TYPE_EXEC; 
+                                                end
+                                alu_pkg::ADDIU, alu_pkg::SUBIU, alu_pkg::ANDI, alu_pkg::ORI, alu_pkg::XORI, alu_pkg::SLTI, alu_pkg::SLTIU : begin next_state = IMM_VAL_COMP; end 
+                                alu_pkg::LW, alu_pkg::SW : begin next_state = MEM_ADDR_COMP; end
+                                alu_pkg::BEQ, alu_pkg::BNE, alu_pkg::BLEZ, alu_pkg::BGTZ, alu_pkg::BLG : begin next_state = BRANCH_COMP; end
+                                alu_pkg::JUMP : begin next_state = JUMP; end
+                                alu_pkg::JAL  : begin next_state = JAL1; end
+                                default : begin next_state = HALT; end
                             endcase 
                         end
+            R_TYPE_STALL : begin next_state = R_TYPE_EXEC; end
 
             R_TYPE_EXEC : begin 
                             // compute the R_TYPE Instruction
@@ -119,16 +134,24 @@ module controller
 
                             alu_op = RTYPE;
 
-                            next_state = R_TYPE_COMP;
+                            if(r_sel_t'(ir_5_to_0) == R_MUL_U || r_sel_t'(ir_5_to_0) == R_MULT)
+                                next_state = FETCH1;
+                            else
+                                next_state = R_TYPE_COMP;
                         end
 
             R_TYPE_COMP : begin 
                              // store the value into rt
+                             alu_op = RTYPE; // hope this works
                              reg_dst = 1'b1; 
                              mem_to_reg = 1'b0; 
                              reg_write = 1'b1; 
                              next_state = FETCH1; 
                         end
+            IMM_VAL_STALL : begin 
+                               // do nothing and just wait for the data 
+                               next_state = IMM_VAL_COMP;
+                            end
             IMM_VAL_COMP : begin 
                              // compute the imm_val
                              alu_src_a = 1'b1; 
@@ -154,6 +177,7 @@ module controller
                                 // compute the offset + base
                                 alu_src_a = 1'b1; 
                                 alu_src_b = 2'b10; 
+                                is_signed = 1'b0; // must zero extend here
                                 alu_op = ADDIU; 
                                 if(ir_31_26 == LW) next_state = MEM_ACCESS;
                                 else next_state = MEM_ACCESS_STORE;
@@ -168,6 +192,7 @@ module controller
                                 // store data into Register File
                                 mem_to_reg = 1'b1; 
                                 reg_dst = 1'b0; 
+                                reg_write = 1'b1; 
                                 next_state = FETCH1; 
                             end
             MEM_ACCESS_STORE : begin 
@@ -176,6 +201,64 @@ module controller
                                 mem_write = 1'b1; 
                                 next_state = FETCH1; 
                             end 
+            BRANCH_COMP  :  begin 
+                                // Must compute target address before evaluating branch condition (backwards)
+                                // take the value from the ALUOut register
+                                pc_source = 2'b01; 
+
+                                // enable the PCWriteCond signal
+                                pc_write_cond = 1'b1; 
+
+                                // evaluate the conditon
+                                alu_src_a = 1'b1; 
+                                alu_src_b = 2'b00; 
+
+                                // update ALU operation with IR31_26
+                                alu_op = alu_op_sel_t'(ir_31_26); 
+
+                                next_state = FETCH1; 
+                            end  
+            JUMP         : begin 
+                                // need to multiply instruction_index by 4 to get actual instruction addr
+                                pc_source = 2'b10; 
+                                pc_write = 1'b1; 
+
+                                next_state = FETCH1;
+                           end 
+            JAL1        :   begin 
+                                // Get PC + 4 value from the PC
+                                alu_src_a = 1'b0; 
+
+                                // just pass the PC + 4 value through the ALU
+                                alu_op = NOP;
+
+                                // get the shifted target address and pass to PC
+                                pc_source = 2'b10; 
+
+                                // write to PC
+                                pc_write = 1'b1; 
+
+                               next_state = JAL2; 
+                            end
+            JAL2         :  begin 
+                                // write PC + 4 to register file (use JAL signal)
+                                mem_to_reg = 1'b0; 
+
+                                jump_and_link = 1'b1; 
+
+                                next_state = FETCH1; 
+                            end
+            JUMPREG       : begin 
+                                // pass reg value through ALU without changing it
+                                alu_src_a = 1'b1; 
+                                alu_op = NOP; 
+
+                                // update PC with new register value
+                                pc_source = 2'b00; 
+
+                                pc_write = 1'b1; 
+                            end
+
             HALT           : begin next_state = HALT; end
             default : begin next_state = HALT; end
         endcase

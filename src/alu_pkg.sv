@@ -55,6 +55,11 @@ package alu_pkg;
         BNE   = 6'b000101, 
         BLEZ  = 6'b000110,
         BGTZ  = 6'b000111,
-        BLG   = 6'b000001
+        BLG   = 6'b000001,
+        LW    = 6'b100011,
+        SW    = 6'b101011,
+        JUMP  = 6'b000010,
+        JAL   = 6'b000011,
+        NOP   = 6'b111111
     } alu_op_sel_t;
 endpackage

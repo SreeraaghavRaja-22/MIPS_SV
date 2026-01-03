@@ -14,8 +14,8 @@ module counter
         if(rst) begin 
             count <= in;  
         end else if(en) begin 
-            // count <= count + 1; 
-            count++;
+            count <= count + 1; 
+            // count++; blocking assignment
         end 
     end 
 

@@ -11,10 +11,10 @@ module top_level
 );
 
     logic pc_write_en, i_or_d, mem_write, mem_to_reg, ir_write, reg_dst, pc_write_cond;
-    logic reg_write, alu_src_a, jump_and_link, is_signed, pc_write; 
+    logic reg_write, alu_src_a, jump_and_link, is_signed, pc_write, branch_taken; 
     logic [1:0] alu_src_b, pc_source; 
     logic [5:0] ir_5_to_0, ir_31_26;
-    logic [WIDTH-1:0] inport_data, outport, branch_taken; 
+    logic [WIDTH-1:0] inport_data, outport; 
     alu_op_sel_t alu_op;
 
     assign pc_write_en = (pc_write_cond & branch_taken) | pc_write;
@@ -68,6 +68,7 @@ module top_level
         .inport_0_en(buttons[0]),
         .inport_1_en(buttons[1]),
         .outport(outport),
+        .branch_taken(branch_taken),
         .ir_5_to_0(ir_5_to_0),
         .ir_31_26(ir_31_26)
     );

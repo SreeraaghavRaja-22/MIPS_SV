@@ -30,7 +30,7 @@ module datapath
     typedef logic [WIDTH-1:0] bus_type;
     bus_type conc_mux_out, pc_out, alu_out, pc_mux_out, rd_data;
     bus_type ir_out, mar_mux_out, sign_extend_out, shift_left_2;
-    bus_type reg_a_in, reg_b_in, reg_a_out, reg_b_out, alu_mux_out; 
+    bus_type reg_a_in, reg_b_in, alu_mux_out; 
     bus_type a_mux_out, b_mux_out, result, result_hi, hi_out, lo_out;
     logic [4:0] ir_mux_out;
     alu_sel_t opsel; 
@@ -69,7 +69,7 @@ module datapath
         .rst(rst),
         .address(pc_mux_out),
         .in_data(inport_data),
-        .wr_data(reg_b_out), 
+        .wr_data(reg_b_in), 
         .inport_0_en(inport_0_en),
         .inport_1_en(inport_1_en),
         .mem_write(mem_write), 
@@ -105,7 +105,7 @@ module datapath
     MAR_MUX
     (
         .in1(alu_mux_out),
-        .in2(ir_out),
+        .in2(rd_data),
         .sel(mem_to_reg),
         .out(mar_mux_out)
     );
@@ -141,29 +141,29 @@ module datapath
     // implement shift left 
     assign shift_left_2 = sign_extend_out << 2;
 
-    // implement accumulation reg A
-    register 
-    #(.WIDTH(WIDTH))
-    REG_A
-    (
-        .clk(clk), 
-        .rst(rst), 
-        .en(1'b1), 
-        .in(reg_a_in),
-        .out(reg_a_out)
-    );
+    // implement accumulation reg A (DO NOT IMPLEMENT, will cause unnecessary cycle delay)
+    // register 
+    // #(.WIDTH(WIDTH))
+    // REG_A
+    // (
+    //     .clk(clk), 
+    //     .rst(rst), 
+    //     .en(1'b1), 
+    //     .in(reg_a_in),
+    //     .out(reg_a_out)
+    // );
 
-    // implement accumulation reg B
-    register 
-    #(.WIDTH(WIDTH))
-    REG_B
-    (
-        .clk(clk), 
-        .rst(rst), 
-        .en(1'b1), 
-        .in(reg_b_in),
-        .out(reg_b_out)
-    );
+    // // implement accumulation reg B
+    // register 
+    // #(.WIDTH(WIDTH))
+    // REG_B
+    // (
+    //     .clk(clk), 
+    //     .rst(rst), 
+    //     .en(1'b1), 
+    //     .in(reg_b_in),
+    //     .out(reg_b_out)
+    // );
 
     // implement accum mux A
     mux_2x1
@@ -171,7 +171,7 @@ module datapath
     A_MUX
     (
         .in1(pc_out),
-        .in2(reg_a_out),
+        .in2(reg_a_in),
         .sel(alu_src_a),
         .out(a_mux_out)
     );
@@ -181,7 +181,7 @@ module datapath
     #(.WIDTH(WIDTH))
     B_MUX 
     (
-        .in1(reg_b_out), 
+        .in1(reg_b_in), 
         .in2(32'd4), 
         .in3(sign_extend_out), 
         .in4(shift_left_2), 
@@ -209,7 +209,7 @@ module datapath
     alu_control ALUC 
     (
         .alu_op(alu_op), 
-        .ir_5_to_0(ir_out[5:0]), 
+        .ir_5_to_0(r_sel_t'(ir_out[5:0])), 
         .ir_20_to_16(ir_out[20:16]),
         .hi_en(hi_en),
         .lo_en(lo_en), 

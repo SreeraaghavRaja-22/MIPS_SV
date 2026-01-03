@@ -2,11 +2,8 @@ import alu_pkg::*;
 
 module alu_control
 (   
-    input logic clk, 
-    input logic rst, 
-    input logic en,
-    input alu_op_sel_t [5:0] alu_op, 
-    input r_sel_t [5:0] ir_5_to_0, 
+    input alu_op_sel_t alu_op, 
+    input r_sel_t ir_5_to_0, 
     input logic [4:0] ir_20_to_16,
     output logic hi_en, 
     output logic lo_en, 
@@ -15,7 +12,10 @@ module alu_control
 );
 
     always_comb begin 
+        hi_en = 1'b0;
+        lo_en = 1'b0;
         alu_lo_hi = 2'b00; // default value to always send the value of ALUOut to reg file
+        opsel = C_NOP;
         case(alu_op) 
             alu_pkg::RTYPE :    begin 
                                     case(ir_5_to_0)
