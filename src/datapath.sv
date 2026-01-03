@@ -15,14 +15,16 @@ module datapath
     input logic alu_src_a, 
     input logic [1:0] alu_src_b, 
     input logic [1:0] pc_source, 
-    input logic [5:0] alu_op, 
+    input alu_op_sel_t alu_op, 
     input logic jump_and_link, 
     input logic is_signed,
     input logic [WIDTH-1:0] inport_data, 
     input logic inport_0_en, 
     input logic inport_1_en, 
     output logic [WIDTH-1:0] outport,
-    output logic branch_taken
+    output logic branch_taken,
+    output logic [5:0] ir_5_to_0, 
+    output logic [5:0] ir_31_26
 );
 
     typedef logic [WIDTH-1:0] bus_type;
@@ -279,4 +281,7 @@ module datapath
         .sel(pc_source),
         .out(conc_mux_out)
     );
+
+    assign ir_5_to_0 = ir_out[5:0];
+    assign ir_31_26 = ir_out[31:26];
 endmodule
