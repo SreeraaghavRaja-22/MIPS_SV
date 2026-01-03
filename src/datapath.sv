@@ -208,6 +208,7 @@ module datapath
     (
         .alu_op(alu_op), 
         .ir_5_to_0(ir_out[5:0]), 
+        .ir_20_to_16(ir_out[20:16]),
         .hi_en(hi_en),
         .lo_en(lo_en), 
         .alu_lo_hi(alu_lo_hi),

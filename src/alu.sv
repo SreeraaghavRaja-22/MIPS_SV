@@ -39,8 +39,12 @@ module alu
             alu_pkg::C_SRA   : begin result = reg_b_s >>> (ir_shift); end
             alu_pkg::C_SLT   : begin if(reg_a_s < reg_b_s) result = 1;  end
             alu_pkg::C_SLTU  : begin if(reg_a < reg_b) result = 1; end
-            alu_pkg::C_BLEZ  : begin if(reg_a <= 0) branch_taken = 1; end 
-            alu_pkg::C_BGTZ  : begin if(reg_a > 0) branch_taken = 1; end 
+            alu_pkg::C_BEQ   : begin if(reg_a == reg_b) branch_taken = 1'b1; end 
+            alu_pkg::C_BNE   : begin if(reg_a != reg_b) branch_taken = 1'b1; end 
+            alu_pkg::C_BLEZ  : begin if(reg_a <= 0) branch_taken = 1'b1; end 
+            alu_pkg::C_BGTZ  : begin if(reg_a > 0) branch_taken = 1'b1; end 
+            alu_pkg::C_BLTZ  : begin if(reg_a < 0) branch_taken = 1'b1; end 
+            alu_pkg::C_BGEZ  : begin if(reg_a >= 0) branch_taken = 1'b1; end 
             alu_pkg::C_NOP   : begin result = reg_a; end 
             default          : begin result = 0; result_hi = 0; branch_taken = 1'b0; carry = 1'b0; borrow = 1'b0; end
         endcase

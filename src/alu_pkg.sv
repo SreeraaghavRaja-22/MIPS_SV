@@ -51,9 +51,10 @@ package alu_pkg;
         XORI  = 6'b001110, 
         SLTI  = 6'b001010,
         SLTIU = 6'b001011, 
-        
-
-
-
+        BEQ   = 6'b000100, 
+        BNE   = 6'b000101, 
+        BLEZ  = 6'b000110,
+        BGTZ  = 6'b000111,
+        BLG   = 6'b000001
     } alu_op_sel_t;
 endpackage

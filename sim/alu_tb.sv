@@ -46,8 +46,12 @@ module alu_tb();
                 C_SRA   : begin result_o = $signed(reg_b_in) >>> (ir_shift_in); end
                 C_SLT   : begin if($signed(reg_a_in) < $signed(reg_b_in)) result_o = 1; end 
                 C_SLTU  : begin if(reg_a_in < reg_b_in) result_o = 1; end
+                C_BEQ   : begin if(reg_a_in === reg_b_in) branch_taken_o = 1'b1; end 
+                C_BNE   : begin if(reg_a_in !== reg_b_in) branch_taken_o = 1'b1; end 
                 C_BLEZ  : begin if(reg_a_in <= 0) branch_taken_o = 1'b1; end 
                 C_BGTZ  : begin if(reg_a_in > 0) branch_taken_o = 1'b1; end 
+                C_BLTZ  : begin if(reg_a_in < 0) branch_taken_o = 1'b1; end 
+                C_BGEZ  : begin if(reg_a_in >= 0) branch_taken_o = 1'b1; end
                 C_NOP   : begin result_o = reg_a; end 
                 default : begin result_o = 0; result_hi_o = 0; branch_taken_o = 1'b0; borrow_o = 1'b0; carry_o = 1'b0; end 
             endcase
@@ -89,7 +93,7 @@ module alu_tb();
         #1; success_tests = 0; failed_tests = 0; total_tests = 0; 
 
         for(i = 0; i < MAX_ITERATIONS; i = i + 1) begin 
-            #1; reg_a = i; reg_b = i; ir_shift = $urandom; opsel = valid_ops[$urandom_range(0, valid_ops.size()-1)]; expected_output = check_out(reg_a, reg_b, opsel, ir_shift);
+            #1; reg_a = $urandom; reg_b = $urandom; ir_shift = $urandom; opsel = valid_ops[$urandom_range(0, valid_ops.size()-1)]; expected_output = check_out(reg_a, reg_b, opsel, ir_shift);
             #1; actual_output = {branch_taken, carry, borrow, result_hi, result}; check_output(expected_output, actual_output);
         end 
 

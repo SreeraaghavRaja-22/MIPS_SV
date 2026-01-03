@@ -7,6 +7,7 @@ module alu_control
     input logic en,
     input alu_op_sel_t [5:0] alu_op, 
     input r_sel_t [5:0] ir_5_to_0, 
+    input logic [4:0] ir_20_to_16,
     output logic hi_en, 
     output logic lo_en, 
     output logic [1:0] alu_lo_hi,
@@ -14,6 +15,7 @@ module alu_control
 );
 
     always_comb begin 
+        alu_lo_hi = 2'b00; // default value to always send the value of ALUOut to reg file
         case(alu_op) 
             alu_pkg::RTYPE :    begin 
                                     case(ir_5_to_0)
@@ -55,7 +57,16 @@ module alu_control
             alu_pkg::ORI   : begin opsel = C_OR;    end 
             alu_pkg::XORI  : begin opsel = C_XOR;   end 
             alu_pkg::SLTI  : begin opsel = C_SLT;   end 
-            alu_pkg::SLTIU : begin opsel = C_SLTIU; end 
+            alu_pkg::SLTIU : begin opsel = C_SLTU;  end 
+            alu_pkg::BEQ   : begin opsel = C_BEQ;   end 
+            alu_pkg::BNE   : begin opsel = C_BNE;   end 
+            alu_pkg::BLEZ  : begin opsel = C_BLEZ;  end 
+            alu_pkg::BGTZ  : begin opsel = C_BGTZ;  end 
+            alu_pkg::BLG   : begin 
+                                if(ir_20_to_16 == 5'd0) opsel = C_BLTZ;
+                                else opsel = C_BGEZ;
+                             end
+            default        : begin opsel = C_NOP;   end             
         endcase
     end 
 endmodule 
