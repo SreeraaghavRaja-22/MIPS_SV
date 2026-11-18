@@ -1,4 +1,5 @@
-Depth = 256;
+D
+pth = 256;
 Width = 32;
 Address_radix = hex;
 Data_radix = hex;
